@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckListMax</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-size: 1.7em;
+        }
+
+        .check {
+            background-color: green;
+            width: 2em;
+            height: 2em;
+
+        }
+
+        #domIn {
+            background-color: rgb(145, 143, 143);
+
+            height: 2em;
+        }
+        .info{
+            font-size:0.5em;
+        }
+    </style>
+</head>
+
+<body>
+    <div>CheckListMax</div>
+
+    <input id="domIn" type="text">
+
+    <div>
+        <ol id="domOL">
+
+        </ol>
+      
+    </div>
+   <div>
+     <div class="info">  e + num do delete</div>
+    <button onclick="localStorage.removeItem('checkListArr')">reset</button>
+   </div>
+    <script>
+        let checkListArr = [
+            
+        ]
+        if (localStorage.checkListArr) {
+            checkListArr = JSON.parse(localStorage.checkListArr);
+        }
+
+        let domOL = document.getElementById("domOL");
+        function showcheckList() {
+            domOL.innerHTML = "";
+            for (let item of checkListArr) {
+                let li = document.createElement("li");
+
+                let input = document.createElement("input");
+                let span = document.createElement("span");
+
+                input.type = "checkbox"
+                input.classList.add("check");
+                span.innerText = item.text;
+
+                if (item.checked) {
+                    input.checked = true;
+                }
+
+                input.addEventListener("click", function () {
+                    item.checked = input.checked;
+                    localStorage.checkListArr = JSON.stringify(checkListArr)
+                })
+
+                li.appendChild(input);
+                li.appendChild(span);
+
+                domOL.appendChild(li)
+
+            }
+        }
+
+        showcheckList();
+        let domIn = document.getElementById("domIn");
+        domIn.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && domIn.value !== "") {
+                let text = domIn.value;
+                text = text.toLowerCase();
+                if (text[0] === "e" && !isNaN(text.replace("e", ""))) {
+
+                    text = text.trim().split(" ");
+
+                    let num = parseInt(text[1].replace("x", ""));
+                   
+                    deleteProduct(num - 1);
+                    
+
+                } else {
+                    checkListArr.push({
+                        text: domIn.value,
+                        checked: false,
+                    });
+                    localStorage.checkListArr = JSON.stringify(checkListArr);
+                }
+                domIn.value = ""
+                showcheckList();
+            }
+            return;
+        })
+
+        function deleteProduct(index) {
+
+            checkListArr.splice(index, 1);
+            localStorage.checkListArr = JSON.stringify(checkListArr);
+
+        }
+    </script>
+</body>
+
+</html>
